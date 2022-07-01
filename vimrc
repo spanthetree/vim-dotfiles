@@ -185,8 +185,8 @@ map <leader>bd :bd<CR>
 map <leader>ba :NERDTreeClose<CR>:1,300 bd!<CR>
 
 " Use the arrows to do something useful
-map <right> :bn<CR>
-map <left> :bp<CR>
+" map <right> :bn<CR>
+" map <left> :bp<CR>
 
 " Remap vim 0
 map 0 ^
