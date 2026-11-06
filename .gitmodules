@@ -106,15 +106,6 @@
 [submodule "bundle/javascript"]
 	path = bundle/javascript
 	url = https://github.com/pangloss/vim-javascript.git
-[submodule "bundle/ghcmod"]
-	path = bundle/ghcmod
-	url = https://github.com/eagletmt/ghcmod-vim.git
-[submodule "bundle/neco-ghc"]
-	path = bundle/neco-ghc
-	url = https://github.com/eagletmt/neco-ghc
-[submodule "bundle/vimproc"]
-	path = bundle/vimproc
-	url = https://github.com/Shougo/vimproc.vim.git
 [submodule "bundle/golang"]
 	path = bundle/golang
 	url = https://github.com/fatih/vim-go.git

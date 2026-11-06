@@ -22,11 +22,9 @@ $ ./manager --init
   None of these are required for vim to start, but various bits won't work
   without them:
 
-*   `make` and a C compiler, to build vimproc (`--init` does this for you)
 *   `rg` (ripgrep) or `ack` for `:Ack`. ripgrep is used if it's installed
 *   `pyflakes` for syntastic's python checking
 *   `xclip` for the `<F9>` copy-to-clipboard mapping
-*   `ghc-mod`, only if you want the Haskell plugins (ghcmod, neco-ghc) to work
 
 ## The "manager" Script
 
@@ -42,14 +40,10 @@ Usage: ./manager
 ```
 
   `--init` (or `--init-submodules`, same thing) runs
-  `git submodule update --init --recursive` and then does a couple of extra
-  steps:
-
-*   Any submodule that got cloned but never checked out (an empty directory
-    with just a `.git` file in it) gets checked out. `git submodule update`
-    skips these because they're already at the right commit, so without this
-    they just stay empty.
-*   Builds vimproc. If the build fails it prints a warning and carries on.
+  `git submodule update --init --recursive`, then checks out any submodule
+  that got cloned but never checked out (an empty directory with just a `.git`
+  file in it). `git submodule update` skips those because they're already at
+  the right commit, so without this they just stay empty.
 
   It's safe to run again whenever.
 

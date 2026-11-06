@@ -42,7 +42,6 @@ function init_submodules() {
     echo "Running git-submodule commands..."
     git submodule update --init --recursive
     repair_submodules
-    build_vimproc
   else
     echo "Run this command from the root of the project."
     exit 1
@@ -61,19 +60,11 @@ function repair_submodules() {
   '
 }
 
-function build_vimproc() {
-  if [ -f "$BUNDLE/vimproc/Makefile" ]; then
-    echo "Building vimproc..."
-    make -C "$BUNDLE/vimproc" || echo "vimproc build failed, continuing without it"
-  fi
-}
-
 function update_submodules() {
   if [ -d $CURRENT/.git ]; then
     echo "Updating all submodules..."
     init_submodules
     git submodule update --remote
-    build_vimproc
   fi
 }
 
