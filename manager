@@ -26,18 +26,10 @@ set -e
 CURRENT=`pwd`
 BUNDLE="$CURRENT/bundle"
 
-DATE=$(date +%d%m%Y)
-GIT_REPO="git://github.com/SegFaultAX/vim-dotfiles.git"
-GIT_BRANCH="segfaultax-$DATE"
-GIT_FETCH_SPEC="+refs/heads/master:refs/heads/$GIT_BRANCH"
-
 function usage() {
   echo "Usage: $0"
   echo "  --help - this help menu"
-  echo "  --fetch-vimrc - download maintainers repo"
-  echo "  --create-symlink - symlink $CURRENT/vimrc to ~/.vimrc"
   echo "  --update-submodules - fetch newest submodule versions"
-  echo "  --clean-branches - remove all maintainer repo branches"
   echo
   echo "  --init - initialize submodules"
   echo "  --init-submodules - initialize submodules"
@@ -85,41 +77,10 @@ function update_submodules() {
   fi
 }
 
-function create_symlink() {
-  echo "Creating symlink for vimrc."
-  VIMRC=$HOME/.vimrc
-  if [ -e "$VIMRC" ]; then
-    TIMESTAMP=$(date +%s)
-    BACKUP="$VIMRC.old.$TIMESTAMP"
-
-    echo "Backing up old $VIMRC to $BACKUP"
-    mv $VIMRC $BACKUP
-  fi
-  ln -s $CURRENT/vimrc $VIMRC
-}
-
-function fetch_vimrc() {
-  echo "Fetching maintainer version to $GIT_BRANCH"
-  git fetch $GIT_REPO $GIT_FETCH_SPEC
-  echo
-  echo "You can now run 'git merge $GIT_BRANCH' from master"
-  echo "You may also want to run 'git submodule init && git submodule update'"
-  echo "You can remove the branch with 'git branch -D $GIT_BRANCH'"
-}
-
-function clean_branches() {
-  echo "Cleaning up branches that match refs/heads/segfaultax-*"
-  git for-each-ref --format="%(refname:short)" refs/heads/segfaultax-\* | \
-    xargs git branch -D
-}
-
 echo "Manager by Michael-Keith Bernard"
 
 # Section configuration
-vimrc=
-symlink=
 submodules=
-clean=
 
 init_submodules=
 
@@ -130,10 +91,7 @@ while [ "$#" -gt 0 ]; do
   shift
   case "$opt" in
     --help) usage; exit;;
-    --fetch-vimrc) vimrc="yes";;
-    --create-symlink) symlink="yes";;
     --update-submodules) submodules="yes";;
-    --clean-branches) clean="yes";;
 
     --init) init_submodules="yes";;
     --init-submodules) init_submodules="yes";;
@@ -141,9 +99,6 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-if [ "$vimrc" = "yes" ]; then fetch_vimrc; fi
-if [ "$symlink" = "yes" ]; then create_symlink; fi
 if [ "$submodules" = "yes" ]; then update_submodules; fi
-if [ "$clean" = "yes" ]; then clean_branches; fi
 
 if [ "$init_submodules" = "yes" ]; then init_submodules; fi
