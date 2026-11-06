@@ -36,6 +36,11 @@ let g:neocomplete#enable_at_startup = 1
 " neocomplete overwrite completefunc
 let g:neocomplete#force_overwrite_completefunc = 1
 
+" Ack - use ripgrep if it's installed, otherwise ack.vim looks for ack
+if executable('rg')
+  let g:ackprg = 'rg --vimgrep --smart-case'
+endif
+
 " Disable paredit by default
 let g:paredit_mode = 0
 
