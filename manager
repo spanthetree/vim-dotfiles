@@ -49,9 +49,30 @@ function init_submodules() {
   if [ -d $CURRENT/.git ]; then
     echo "Running git-submodule commands..."
     git submodule update --init --recursive
+    repair_submodules
+    build_vimproc
   else
     echo "Run this command from the root of the project."
     exit 1
+  fi
+}
+
+# A submodule whose clone succeeded but checkout didn't is left with no index
+# and an empty work tree. `submodule update` thinks it's already at the right
+# commit and skips it, so check those out explicitly.
+function repair_submodules() {
+  git submodule foreach --quiet --recursive '
+    if [ -z "$(git ls-files)" ]; then
+      echo "Repairing empty checkout in $displaypath"
+      git reset --quiet --hard HEAD
+    fi
+  '
+}
+
+function build_vimproc() {
+  if [ -f "$BUNDLE/vimproc/Makefile" ]; then
+    echo "Building vimproc..."
+    make -C "$BUNDLE/vimproc" || echo "vimproc build failed, continuing without it"
   fi
 }
 
@@ -59,7 +80,8 @@ function update_submodules() {
   if [ -d $CURRENT/.git ]; then
     echo "Updating all submodules..."
     init_submodules
-    git submodule foreach git pull origin master
+    git submodule update --remote
+    build_vimproc
   fi
 }
 
