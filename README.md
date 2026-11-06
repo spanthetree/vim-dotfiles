@@ -1,114 +1,73 @@
 ## Introduction
 
-  These are the [vim](http://www.vim.org/) dotfiles used by Michael-Keith
-  Bernard. Please feel free to use and modify them as you see fit.
+  My vim config. It started as a fork of Michael-Keith Bernard's
+  [SegFaultAX/vim-dotfiles](https://github.com/SegFaultAX/vim-dotfiles) and has
+  drifted a fair bit since. Plugins are git submodules under `bundle/`, loaded
+  with [pathogen](https://github.com/tpope/vim-pathogen).
 
 ## Installation
 
-*   Clone the repository: `$ git clone git://github.com/SegFaultAX/vim-dotfiles.git ~/.vim`
-*   Move into the new .vim directory: `$ cd ~/.vim`
-*   Run the provided initialization script: `$ ./manager --init`
-*   Symlink your vimrc: `$ ./manager --create-symlink`
-
-**Important**: The `--create-symlink` option will automatically backup your
-~/.vimrc if one exists.
-
-**Note**: This setup depends on vim being compiled with Ruby and Python support.
-If you built vim yourself, be sure to include `--enable-pythoninterp` and
-`--enable-rubyinterp` during configuration. If you're not sure if vim was built
-with Ruby and Python support, you can use `vim --version` to check.
-
-**Note**: If you choose to fork this repo, you can fetch my current master
-version using the `--fetch-vimrc` command in manager.
-
-### NeoVim Users
-
-This vim configuration should work as is with neovim (for the most part). If
-neovim is not correctly loading configuration from `~/.vim`, see this issue:
-
-https://github.com/neovim/neovim/issues/3499
-
-And the documentation:
-
-https://github.com/neovim/neovim/blob/master/runtime/doc/vim_diff.txt#L22
-
-```vim
-:help vim_diff
+```bash
+$ git clone https://github.com/spanthetree/vim-dotfiles.git ~/.vim
+$ cd ~/.vim
+$ ./manager --init
 ```
+
+  You don't need a `~/.vimrc` symlink, since Vim 7.4+ reads `~/.vim/vimrc`
+  directly. If there's already a `~/.vimrc` on the machine, though, vim will
+  use that instead, so move it out of the way.
+
+### Dependencies
+
+  None of these are required for vim to start, but various bits won't work
+  without them:
+
+*   `make` and a C compiler, to build vimproc (`--init` does this for you)
+*   `rg` (ripgrep) or `ack` for `:Ack`. ripgrep is used if it's installed
+*   `pyflakes` for syntastic's python checking
+*   `xclip` for the `<F9>` copy-to-clipboard mapping
+*   `ghc-mod`, only if you want the Haskell plugins (ghcmod, neco-ghc) to work
 
 ## The "manager" Script
 
-  The `manager` script makes staying up to date with this repository a breeze.
-  First, check out the output from `manager --help`:
-
 ```bash
-$ ./manager
+$ ./manager --help
 Manager by Michael-Keith Bernard
 Usage: ./manager
   --help - this help menu
-  --fetch-vimrc - download maintainers repo
-  --create-symlink - symlink /home/mkbernard/.vim/vimrc to ~/.vimrc
   --update-submodules - fetch newest submodule versions
-  --clean-branches - remove all maintainer repo branches
 
-  --init - initialize submodules, build Command-T, and clean Snipmate
-  --init-commandt - build Command-T
-  --init-snipmate - clean Snipmate
+  --init - initialize submodules
   --init-submodules - initialize submodules
 ```
 
-  Simply running `./manager --init` from the project root will, by default,
-  initialize and update any submodules, build Command-T, and remove the
-  snipmate/snippets directory (there is a replacement snippets submodule in the
-  root of this project). If you'd like to run any of these commands
-  individually, use the available `--init-X` commands.
+  `--init` (or `--init-submodules`, same thing) runs
+  `git submodule update --init --recursive` and then does a couple of extra
+  steps:
 
-### Staying up-to-date
+*   Any submodule that got cloned but never checked out (an empty directory
+    with just a `.git` file in it) gets checked out. `git submodule update`
+    skips these because they're already at the right commit, so without this
+    they just stay empty.
+*   Builds vimproc. If the build fails it prints a warning and carries on.
 
-  To quickly fetch any changes from this repository, simply run:
+  It's safe to run again whenever.
 
-```bash
-$ ./manager --fetch-vimrc
-Manager by Michael-Keith Bernard
-Fetching maintainer version to segfaultax-25022012
-From git://github.com/SegFaultAX/vim-dotfiles
- * [new branch]      master     -> segfaultax-25022012
+  `--update-submodules` runs `--init` and then
+  `git submodule update --remote`, which moves every submodule to the latest
+  commit on its upstream's default branch. That changes the commits recorded in
+  this repo, so check `git diff` before committing. Old plugins occasionally
+  get renamed, archived or have their default branch moved.
 
-You can now run 'git merge segfaultax-25022012' from master
-You may also want to run 'git submodule init && git submodule update'
-You can remove the branch with 'git branch -D segfaultax-25022012'
-```
-
-  As you can see it fetches update from SegFaultAX/vim-dotfiles on GitHub into a
-  branch called `segfaultax-` followed by todays date. Now you can merge in my
-  changes, add/update any submodules, and destroy the temporary branch:
+## Adding and removing plugins
 
 ```bash
-$ git checkout master
-$ git merge segfaultax-22022012
-$ git submodule init && git submodule update
-$ git branch -D segfaultax-22022012
+$ git submodule add https://github.com/someone/some-plugin.git bundle/some-plugin
+$ git rm bundle/some-plugin
 ```
-
-  There is also a convenient helper method to delete all the `segfaultax-*`
-  branches automatically:
-
-```bash
-$ ./manager --clean-branches
-```
-
-## Contributing
-
-  I encourage you to submit patches or modifications to my vimrc or the list of
-  submodules provided in this project. Make sure to rebase your changes onto my
-  master branch and squash intermediate commits before issuing a pull request.
-
-  **Active Contributors**:
-
-  *   [Michael-Keith Bernard](https://github.com/SegFaultAX)
-  *   [David Bush](https://github.com/davekcd)
 
 ## License
-  
+
   All submodules, fonts, colorschemes and scripts are property of their
-  respective owners. Please see their attached licenses for details.
+  respective owners. Please see their attached licenses for details. The
+  `manager` script is MIT licensed, see the header in the file.
